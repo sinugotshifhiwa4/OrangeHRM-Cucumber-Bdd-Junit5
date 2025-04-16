@@ -1,0 +1,77 @@
+@login_required
+Feature: Orange HRM PIM Module
+
+  As an HR administrator of the Orange HRM system
+  I want to manage employee personnel information
+  So that I can maintain accurate employee records
+
+  @PIM @Navigation @Smoke
+  Scenario: User can navigate to PIM module
+    When the user clicks on the "PIM" menu item in the sidebar
+    Then the user should see the "Employee Information" page
+    And the user should see the employee list table
+
+  @PIM @AddEmployee @Sanity
+  Scenario Outline: Add a new employee with basic information
+    When the user clicks on the "PIM" menu item in the sidebar
+    And the user clicks on the "Add Employee" button
+    Then the "Add Employee" form should be displayed
+    When the user enters first name "<FIRST_NAME>" and last name "<LAST_NAME>"
+    And the user enters employee id "<EMPLOYEE_ID>"
+    And the user toggles "Create Login Details" to "<CREATE_LOGIN>"
+    And the user clicks the "Save" button
+    Then the employee should be created successfully
+    And the user should be redirected to the employee profile page
+
+    Examples:
+      | FIRST_NAME        | LAST_NAME        | EMPLOYEE_ID   | CREATE_LOGIN |
+      | <valid_firstName> | <valid_lastName> | <valid_empid> | No           |
+      | <valid_firstName> | <valid_lastName> | <valid_empid> | Yes          |
+
+  @PIM @AddEmployee @LoginDetails
+  Scenario: Add employee with login credentials
+    When the user clicks on the "PIM" menu item in the sidebar
+    And the user clicks on the "Add Employee" button
+    Then the "Add Employee" form should be displayed
+    When the user enters first name "<valid_fname>" and last name "<valid_lname>"
+    And the user enters employee id "<valid_empid>"
+    And the user toggles "Create Login Details" to "Yes"
+    Then login credential fields should be displayed
+    When the user enters username "<valid_username>"
+    And the user selects status "<valid_status>"
+    And the user enters password "<valid_password>" and confirms it
+    And the user clicks the "Save" button
+    Then the employee should be created successfully with login credentials
+    And the user should be redirected to the employee profile page
+
+  @PIM @SearchEmployee @Sanity
+  Scenario: Search for an employee
+    When the user clicks on the "PIM" menu item in the sidebar
+    And the user enters employee name "<valid_employee>" in the search field
+    And the user clicks the "Search" button
+    Then the search results should display employees matching "<valid_employee>"
+    And the user should see employee details in the results table
+
+  @PIM @EditEmployee
+  Scenario: Edit employee personal details
+    When the user clicks on the "PIM" menu item in the sidebar
+    And the user searches for employee "<valid_employee>"
+    And the user clicks on the first employee in the search results
+    Then the employee profile page should be displayed
+    When the user navigates to the "Personal Details" tab
+    And the user edits the employee's personal information
+    And the user clicks the "Save" button
+    Then the changes should be saved successfully
+    And a success message should be displayed
+
+  @PIM @DeleteEmployee
+  Scenario: Delete an employee record
+    When the user clicks on the "PIM" menu item in the sidebar
+    And the user searches for employee "<valid_employee>"
+    And the user selects the checkbox for the employee in search results
+    And the user clicks the "Delete Selected" button
+    Then a confirmation dialog should appear
+    When the user confirms the deletion
+    Then the employee should be deleted successfully
+    And a success message should be displayed
+    And the employee should no longer appear in the search results

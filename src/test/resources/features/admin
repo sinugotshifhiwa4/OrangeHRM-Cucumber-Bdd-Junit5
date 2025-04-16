@@ -1,0 +1,57 @@
+@login_required
+Feature: Orange HRM Admin User Management
+
+  As an administrator of the Orange HRM system
+  I want to add new users to the system
+  So that new employees can have appropriate access based on their roles
+
+  @Admin @UserManagement @Smoke
+  Scenario: Admin can navigate to User Management page
+    When the user clicks on the "Admin" menu item in the sidebar
+    Then the user should see the User Management section
+    And the "System Users" page should be displayed
+
+  @Admin @UserManagement @Sanity
+  Scenario: Admin can add a new user
+    When the user clicks on the "Admin" menu item in the sidebar
+    And the user clicks on the "Add" button
+    Then the "Add User" form should be displayed
+    When the user selects a User Role from the dropdown
+    And the user enters an Employee Name in the typeahead field
+    And the user enters a Username in the username field
+    And the user selects a Status from the dropdown
+    And the user enters a Password that meets the security requirements
+    And the user enters the same password in the Confirm Password field
+    And the user clicks the "Save" button
+    Then the new user should be created successfully
+    And the user should be redirected to the System Users page
+    And a success message should be displayed
+
+  @Admin @UserManagement @Negative
+  Scenario Outline: Admin cannot add user with invalid data
+    When the user clicks on the "Admin" menu item in the sidebar
+    And the user clicks on the "Add" button
+    Then the "Add User" form should be displayed
+    When the user fills the form with "<USER_ROLE>", "<EMPLOYEE_NAME>", "<USERNAME>", "<STATUS>", "<PASSWORD>", "<CONFIRM_PASSWORD>"
+    And the user clicks the "Save" button
+    Then the form should show an error message for field "<ERROR_FIELD>"
+
+    Examples:
+      | USER_ROLE        | EMPLOYEE_NAME        | USERNAME           | STATUS           | PASSWORD           | CONFIRM_PASSWORD           | ERROR_FIELD        |
+      | <valid_role>     | <empty_value>        | <valid_username>   | <valid_status>   | <valid_password>   | <valid_password>           | Employee Name      |
+      | <valid_role>     | <valid_employee>     | <empty_value>      | <valid_status>   | <valid_password>   | <valid_password>           | Username           |
+      | <valid_role>     | <valid_employee>     | <valid_username>   | <valid_status>   | <short_password>   | <short_password>           | Password           |
+      | <valid_role>     | <valid_employee>     | <valid_username>   | <valid_status>   | <valid_password>   | <different_password>       | Confirm Password   |
+      | <empty_value>    | <valid_employee>     | <valid_username>   | <valid_status>   | <valid_password>   | <valid_password>           | User Role          |
+      | <valid_role>     | <valid_employee>     | <valid_username>   | <empty_value>    | <valid_password>   | <valid_password>           | Status             |
+
+
+  @Admin @UserManagement @Cancel
+  Scenario: Admin can cancel adding a new user
+    When the user clicks on the "Admin" menu item in the sidebar
+    And the user clicks on the "Add" button
+    Then the "Add User" form should be displayed
+    When the user fills in some user information
+    And the user clicks the "Cancel" button
+    Then the user should be redirected to the System Users page
+    And no new user should be created
