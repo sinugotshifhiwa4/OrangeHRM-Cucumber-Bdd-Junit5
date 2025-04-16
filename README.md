@@ -1,7 +1,3 @@
-Absolutely, Tshifhiwa! Here's a polished and comprehensive `README.md` file that documents everything you've built — the encryption flow, the test runner, the Maven profile for UAT Sanity execution, and the Allure reporting.
-
----
-
 # 🧪 OrangeHRM Automation Framework
 
 This repository contains test automation tools for the OrangeHRM application, including encrypted credential management and Cucumber-based BDD testing with parallel execution and reporting.
